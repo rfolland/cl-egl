@@ -24,6 +24,7 @@
   (:opengl-bit #x0008)
   (:opengl-es-bit #x0001)
   (:opengl-api #x30A2)
+  (:opengl-es-api #x30A0)
   (:context-major-version #x3098)
   (:context-minor-version #x30FB)
   (:none #x3038))
@@ -37,6 +38,20 @@
   (display EGLDisplay)
   (major :pointer)
   (minor :pointer))
+
+(defcfun "eglGetProcAddress" :pointer
+  (procname :string))
+
+(defconstant EGL_PLATFORM_GBM_KHR #x31D7)
+
+(defun get-platform-display (device)
+  (foreign-funcall-pointer (eglGetProcAddress (convert-to-foreign "eglGetPlatformDisplayEXT"
+                                                                  '(:pointer :char)))
+                           ()
+                           EGLint EGL_PLATFORM_GBM_KHR
+                           :pointer device
+                           :pointer (ccl:%null-ptr)
+                           EGLDisplay))
 
 (defun initialize (display)
   (with-foreign-objects
@@ -119,4 +134,8 @@
 (defcfun ("eglDestroyContext" destroy-context) EGLBoolean
   (display EGLDisplay)
   (context EGLContext))
+
+(defcfun ("eglQueryString" query-string) (:pointer :char)
+  (display EGLDisplay)
+  (name EGLInt))
 

@@ -13,6 +13,6 @@
    swap-buffers
    destroy-surface
    destroy-context
-   terminate))
-
-
+   terminate
+   get-platform-display
+   query-string))
